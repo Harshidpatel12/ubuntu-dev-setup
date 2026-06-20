@@ -237,9 +237,9 @@ if [ -t 0 ]; then
     read -rp "🚀 Do you want to install modern CLI utilities (fzf, ripgrep, bat)? [y/N]: " setup_cli_utils
 
     if [[ "$setup_cli_utils" =~ ^[Yy]$ ]]; then
-        echo "--> Installing fzf, ripgrep, batcat..."
-        # NOTE: On Ubuntu, 'bat' is packaged as 'batcat' to avoid a naming conflict
-        $SUDO apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" fzf ripgrep batcat
+        echo "--> Installing fzf, ripgrep, bat..."
+        # NOTE: On Ubuntu, the 'bat' package is installed but the binary is named 'batcat' to avoid a naming conflict
+        $SUDO apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" fzf ripgrep bat
 
         # Create a 'bat' symlink so it can be called as 'bat' instead of 'batcat'
         mkdir -p "$HOME/.local/bin"
