@@ -3,6 +3,7 @@
 [![OS](https://img.shields.io/badge/OS-Ubuntu-orange?logo=ubuntu&logoColor=white)](https://ubuntu.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Shell](https://img.shields.io/badge/shell-bash-blue?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
+[![Lint Setup Script](https://github.com/Harshidpatel12/ubuntu-dev-setup/actions/workflows/lint.yml/badge.svg)](https://github.com/Harshidpatel12/ubuntu-dev-setup/actions/workflows/lint.yml)
 
 An automated, developer-focused bootstrap script to configure a fresh Ubuntu workstation into a high-productivity development environment in minutes.
 
@@ -16,9 +17,13 @@ Whether you are setting up a local machine, a fresh VM, or a remote server, **ub
 - 🐳 **Docker Ecosystem**: Installs Docker Engine & Docker Compose (v2) from official Docker repositories, configures non-root access, and configures Docker CLI shell auto-completions.
 - ⚡ **Lightning Fast Python**: Installs Astral's [`uv`](https://github.com/astral-sh/uv) (fast Python toolchain manager) and automatically configures shell autocompletions for Bash and Zsh.
 - 🟨 **Interactive Node.js Setup (Optional)**: Prompts to install Fast Node Manager (`fnm`) and Node.js LTS, keeping your JavaScript setup modern and switchable.
-- 🚀 **Modern CLI Power-ups (Optional)**: Prompts to install high-productivity command line utilities: `fzf` (fuzzy finder), `ripgrep` (search), and `bat` (enhanced cat with syntax highlighting).
+- 🦀 **Rust Toolchain (Optional)**: Installs `rustup` with the stable toolchain and automatically configures `~/.cargo/env` in all shell profiles.
+- 🐹 **Go Toolchain (Optional)**: Downloads and installs the latest official Go release from `go.dev` into `/usr/local/go` and injects `$GOPATH/bin` into your shell PATH.
+- 🚀 **Starship Prompt (Optional)**: Installs [Starship](https://starship.rs) — a blazing-fast, infinitely customizable cross-shell prompt — and registers its init hook for Bash and Zsh.
+- 🛠️ **Modern CLI Power-ups (Optional)**: Prompts to install high-productivity command line utilities: `fzf` (fuzzy finder), `ripgrep` (search), and `bat` (enhanced cat with syntax highlighting).
 - 🖥️ **Desktop IDEs (Optional / GUI-only)**: Safely detects a graphical desktop environment and offers to install **VS Code** (native Microsoft APT package) and **PyCharm Community** (classic Snap package).
 - ⚙️ **Performance Tweaks**: Optimizes Linux file-watcher limits (`fs.inotify.max_user_watches`) to ensure smooth performance in heavy IDEs (like VS Code, IntelliJ, etc.).
+- 🎨 **Colorized Output**: Every stage uses ANSI color-coded log helpers (`log_step`, `log_success`, `log_warning`, `log_error`) so you can follow progress at a glance.
 - 💻 **Productive Environment**: Registers pre-configured, helpful shell aliases (e.g., `gs`, `dco`, `dps`) and PATH settings to **both Bash and Zsh** (via `~/.bashrc` and `~/.zshrc`).
 - 🔑 **Interactive Identity Setup**: Guides you through configuring Git global settings and generates modern `Ed25519` SSH keys for GitHub/GitLab without overwriting existing keys.
 - 🐳 **Container & Host Aware**: Automatically detects if it is running inside a Docker container (where root is the default) or on a host machine, adapting permissions and execution styles accordingly.
@@ -105,13 +110,31 @@ For large codebases, IDEs can quickly hit the default Linux file-watcher limit. 
 - Installs Fast Node Manager (`fnm`), an ultra-fast Node.js version manager written in Rust.
 - Automatically downloads and configures the latest Node.js LTS version.
 
-### 7. Modern CLI Utilities (Optional)
+### 7. Rust Toolchain (Optional)
+
+- Installs [`rustup`](https://rustup.rs/) — the official Rust toolchain installer — in non-interactive mode.
+- Appends `source ~/.cargo/env` to all detected shell profiles so `cargo`, `rustc`, and `rustup` are available immediately after a terminal restart.
+- Skips installation if `rustc` is already on `$PATH`.
+
+### 8. Go Toolchain (Optional)
+
+- Fetches the latest stable Go release version directly from `go.dev/VERSION` and downloads the official Linux tarball.
+- Installs Go into `/usr/local/go` and cleans up the temporary archive.
+- Injects both `/usr/local/go/bin` and `~/go/bin` (`$GOPATH/bin`) into all shell profiles idempotently.
+
+### 9. Starship Prompt (Optional)
+
+- Installs [Starship](https://starship.rs/) using the official one-line install script in `--yes` (non-interactive) mode.
+- Appends the correct `eval "$(starship init bash|zsh)"` hook to each detected shell profile.
+- Safe to re-run — a guard marker prevents duplicate hook entries.
+
+### 10. Modern CLI Utilities (Optional)
 
 - Installs `fzf` (fuzzy finder) for interactive command-line searches.
 - Installs `ripgrep` (`rg`) for rapid recursive file searching.
 - Installs `bat` (a `cat` clone with syntax highlighting) and configures a `bat` command redirect so it launches natively on Ubuntu.
 
-### 8. Desktop IDEs (Optional / GUI-only)
+### 11. Desktop IDEs (Optional / GUI-only)
 
 - Automatically checks if a display server is running (`$DISPLAY` or `$WAYLAND_DISPLAY`) to avoid installing graphical programs on remote headless servers or minimal CLI containers.
 - Installs **VS Code** via Microsoft's official GPG-signed APT repository (recommended over snap for system terminal shell integration).
@@ -151,6 +174,9 @@ Below is a reference list of the tools managed by this script, complete with the
 | **fzf**                | Optional (Prompt)   | Command-line fuzzy finder for files and history     | [github.com/fzf](https://github.com/junegunn/fzf)                  |
 | **ripgrep (`rg`)**     | Optional (Prompt)   | Line-oriented search tool (modern grep replacement) | [github.com/ripgrep](https://github.com/BurntSushi/ripgrep)        |
 | **bat**                | Optional (Prompt)   | Cat clone with syntax highlighting & Git diffs      | [github.com/bat](https://github.com/sharkdp/bat)                   |
+| **Rust (rustup)**      | Optional (Prompt)   | Systems programming language and toolchain manager  | [rustup.rs](https://rustup.rs/)                                    |
+| **Go (Golang)**        | Optional (Prompt)   | Statically typed compiled programming language      | [go.dev](https://go.dev/doc/)                                      |
+| **Starship**           | Optional (Prompt)   | Cross-shell fast & customizable prompt              | [starship.rs](https://starship.rs/)                                |
 | **VS Code**            | Optional (GUI Only) | Standard graphical code editor                      | [code.visualstudio.com](https://code.visualstudio.com/)            |
 | **PyCharm Community**  | Optional (GUI Only) | Python integrated development environment           | [jetbrains.com/pycharm](https://www.jetbrains.com/pycharm/)        |
 
