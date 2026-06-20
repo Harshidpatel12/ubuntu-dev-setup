@@ -17,6 +17,7 @@ Whether you are setting up a local machine, a fresh VM, or a remote server, **ub
 - ⚡ **Lightning Fast Python**: Installs Astral's [`uv`](https://github.com/astral-sh/uv) (fast Python toolchain manager) and automatically configures shell autocompletions.
 - 🟨 **Interactive Node.js Setup (Optional)**: Prompts to install Fast Node Manager (`fnm`) and Node.js LTS, keeping your JavaScript setup modern and switchable.
 - 🚀 **Modern CLI Power-ups (Optional)**: Prompts to install high-productivity command line utilities: `fzf` (fuzzy finder), `ripgrep` (search), and `bat` (enhanced cat with syntax highlighting).
+- 🖥️ **Desktop IDEs (Optional / GUI-only)**: Safely detects a graphical desktop environment and offers to install **VS Code** (native Microsoft APT package) and **PyCharm Community** (classic Snap package).
 - ⚙️ **Performance Tweaks**: Optimizes Linux file-watcher limits (`fs.inotify.max_user_watches`) to ensure smooth performance in heavy IDEs (like VS Code, IntelliJ, etc.).
 - 💻 **Productive Environment**: Registers pre-configured, helpful shell aliases (e.g., `gs`, `dco`, `dps`) and sets up auto-completions for a smooth workflow.
 - 🔑 **Interactive Identity Setup**: Guides you through configuring Git global settings and generates modern `Ed25519` SSH keys for GitHub/GitLab without overwriting existing keys.
@@ -101,6 +102,11 @@ For large codebases, IDEs can quickly hit the default Linux file-watcher limit. 
 * Installs `ripgrep` (`rg`) for rapid recursive file searching.
 * Installs `bat` (a `cat` clone with syntax highlighting) and configures a `bat` command redirect so it launches natively on Ubuntu.
 
+### 8. Desktop IDEs (Optional / GUI-only)
+* Automatically checks if a display server is running (`$DISPLAY` or `$WAYLAND_DISPLAY`) to avoid installing graphical programs on remote headless servers or minimal CLI containers.
+* Installs **VS Code** via Microsoft's official GPG-signed APT repository (recommended over snap for system terminal shell integration).
+* Installs **PyCharm Community Edition** via canonical classic snap packages.
+
 ---
 
 ## 🔒 Security & Safety First
@@ -134,6 +140,8 @@ Below is a reference list of the tools managed by this script, complete with the
 | **fzf** | Optional (Prompt) | Command-line fuzzy finder for files and history | [github.com/fzf](https://github.com/junegunn/fzf) |
 | **ripgrep (`rg`)** | Optional (Prompt) | Line-oriented search tool (modern grep replacement) | [github.com/ripgrep](https://github.com/BurntSushi/ripgrep) |
 | **bat** | Optional (Prompt) | Cat clone with syntax highlighting & Git diffs | [github.com/bat](https://github.com/sharkdp/bat) |
+| **VS Code** | Optional (GUI Only) | Standard graphical code editor | [code.visualstudio.com](https://code.visualstudio.com/) |
+| **PyCharm Community** | Optional (GUI Only) | Python integrated development environment | [jetbrains.com/pycharm](https://www.jetbrains.com/pycharm/) |
 
 ---
 

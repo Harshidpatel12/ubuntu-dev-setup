@@ -237,6 +237,40 @@ EOF
         echo "--> Skipping modern CLI utilities."
     fi
 
+    # --- GUI Desktop Applications (VS Code, PyCharm) ---
+    if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
+        echo ""
+        read -p "🖥️  GUI Desktop detected. Do you want to install VS Code? [y/N]: " setup_vscode
+        if [[ "$setup_vscode" =~ ^[Yy]$ ]]; then
+            if ! command -v code &> /dev/null; then
+                echo "--> Installing VS Code..."
+                # Import Microsoft GPG key
+                curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | $SUDO tee /usr/share/keyrings/packages.microsoft.gpg > /dev/null
+                # Add Microsoft VS Code repository
+                echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | $SUDO tee /etc/apt/sources.list.d/vscode.list > /dev/null
+                $SUDO apt-get update -y
+                $SUDO apt-get install -y code
+            else
+                echo "--> VS Code is already installed."
+            fi
+        else
+            echo "--> Skipping VS Code installation."
+        fi
+
+        echo ""
+        read -p "🐍 Do you want to install PyCharm Community Edition? [y/N]: " setup_pycharm
+        if [[ "$setup_pycharm" =~ ^[Yy]$ ]]; then
+            if ! command -v pycharm-community &> /dev/null; then
+                echo "--> Installing PyCharm Community..."
+                $SUDO snap install pycharm-community --classic
+            else
+                echo "--> PyCharm Community is already installed."
+            fi
+        else
+            echo "--> Skipping PyCharm Community installation."
+        fi
+    fi
+
 else
     echo "--> Non-interactive shell detected. Skipping interactive configuration."
 fi
