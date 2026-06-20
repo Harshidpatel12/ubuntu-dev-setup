@@ -115,7 +115,7 @@ The script updates your local package lists and installs the following:
 - **Diagnostics & Monitoring**: `htop`, `lsof`, `jq`
 - **Compilers & Build Tools**: `build-essential` (gcc, g++, make)
 - **Text Editors**: `vim`
-- **Utilities**: `tldr` (simplified man pages), `bash-completion`
+- **Utilities**: `tldr` (simplified man pages), `bash-completion`, `unzip`
 
 ### 2. Docker Setup
 
@@ -205,6 +205,7 @@ Below is a reference list of the tools managed by this script, complete with the
 | **OpenSSH**            | Core (Default)      | Secure remote login protocol and agents             | [openssh.com](https://www.openssh.com/)                            |
 | **tldr**               | Core (Default)      | Simplified, community-driven terminal man pages     | [tldr.sh](https://tldr.sh/)                                        |
 | **bash-completion**    | Core (Default)      | Tab-completion rules for command-line tools         | [github.com/scop](https://github.com/scop/bash-completion)         |
+| **unzip**              | Core (Default)      | Archive extraction; required by fnm and other tools | Ubuntu APT                                                         |
 | **FNM (Node Manager)** | Optional (Prompt)   | Blazing-fast Node.js version manager in Rust        | [fnm.vercel.app](https://fnm.vercel.app/)                          |
 | **Node.js (LTS)**      | Optional (Prompt)   | JavaScript runtime environment                      | [nodejs.org](https://nodejs.org/en/docs)                           |
 | **fzf**                | Optional (Prompt)   | Command-line fuzzy finder for files and history     | [github.com/fzf](https://github.com/junegunn/fzf)                  |

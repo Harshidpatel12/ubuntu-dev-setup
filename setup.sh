@@ -279,7 +279,7 @@ run_cmd "apt-get install core packages" $SUDO apt-get install -y \
     -o Dpkg::Options::="--force-confdef" \
     -o Dpkg::Options::="--force-confold" \
     git curl jq htop vim lsof build-essential \
-    openssh-server openssh-client tldr bash-completion gh
+    openssh-server openssh-client tldr bash-completion unzip gh
 
 if [ "$DRY_RUN" = false ]; then
     GIT_VER=$(get_tool_version git --version)
