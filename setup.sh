@@ -37,7 +37,7 @@ $SUDO apt-get update -y
 if ! command -v gh &> /dev/null; then
     echo "--> Configuring GitHub CLI repository..."
     $SUDO mkdir -p -m 755 /etc/apt/keyrings
-    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | $SUDO dd of=/etc/apt/keyrings/githubcli-archive-keyring.gpg 2>/dev/null
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | $SUDO dd of=/etc/apt/keyrings/githubcli-archive-keyring.gpg 2> /dev/null
     $SUDO chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | $SUDO tee /etc/apt/sources.list.d/github-cli.list > /dev/null
     $SUDO apt-get update -y
@@ -118,7 +118,7 @@ for profile in "${PROFILES[@]}"; do
         else
             shell_type="bash"
         fi
-        
+
         cat << EOF >> "$profile"
 
 # --- AUTOMATED UV COMPLETION ---
@@ -170,11 +170,11 @@ echo ""
 if [ -t 0 ]; then
 
     # --- Git & SSH Setup ---
-    read -p "🔑 Configure Git and generate a GitHub/GitLab SSH key right now? [y/N]: " setup_git
+    read -rp "🔑 Configure Git and generate a GitHub/GitLab SSH key right now? [y/N]: " setup_git
 
     if [[ "$setup_git" =~ ^[Yy]$ ]]; then
-        read -p "Enter your full name for Git commits (e.g. Jane Doe): " git_name
-        read -p "Enter your Git email address: " git_email
+        read -rp "Enter your full name for Git commits (e.g. Jane Doe): " git_name
+        read -rp "Enter your Git email address: " git_email
 
         git config --global user.name "$git_name"
         git config --global user.email "$git_email"
@@ -201,7 +201,7 @@ if [ -t 0 ]; then
 
     # --- Node.js Setup (via fnm) ---
     echo ""
-    read -p "🟨 Do you want to install Node.js (via FNM - Fast Node Manager)? [y/N]: " setup_node
+    read -rp "🟨 Do you want to install Node.js (via FNM - Fast Node Manager)? [y/N]: " setup_node
 
     if [[ "$setup_node" =~ ^[Yy]$ ]]; then
         if ! command -v fnm &> /dev/null; then
@@ -230,7 +230,7 @@ if [ -t 0 ]; then
 
     # --- Modern CLI Utilities (fzf, ripgrep, bat) ---
     echo ""
-    read -p "🚀 Do you want to install modern CLI utilities (fzf, ripgrep, bat)? [y/N]: " setup_cli_utils
+    read -rp "🚀 Do you want to install modern CLI utilities (fzf, ripgrep, bat)? [y/N]: " setup_cli_utils
 
     if [[ "$setup_cli_utils" =~ ^[Yy]$ ]]; then
         echo "--> Installing fzf, ripgrep, batcat..."
@@ -266,7 +266,7 @@ EOF
     # --- GUI Desktop Applications (VS Code, PyCharm) ---
     if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
         echo ""
-        read -p "🖥️  GUI Desktop detected. Do you want to install VS Code? [y/N]: " setup_vscode
+        read -rp "🖥️  GUI Desktop detected. Do you want to install VS Code? [y/N]: " setup_vscode
         if [[ "$setup_vscode" =~ ^[Yy]$ ]]; then
             if ! command -v code &> /dev/null; then
                 echo "--> Installing VS Code..."
@@ -284,7 +284,7 @@ EOF
         fi
 
         echo ""
-        read -p "🐍 Do you want to install PyCharm Community Edition? [y/N]: " setup_pycharm
+        read -rp "🐍 Do you want to install PyCharm Community Edition? [y/N]: " setup_pycharm
         if [[ "$setup_pycharm" =~ ^[Yy]$ ]]; then
             if ! command -v pycharm-community &> /dev/null; then
                 echo "--> Installing PyCharm Community..."
