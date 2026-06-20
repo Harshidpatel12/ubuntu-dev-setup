@@ -1,0 +1,18 @@
+# System files
+.DS_Store
+Thumbs.db
+db.sqlite3
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# Temporary script artifacts
+get-docker.sh
+*.log
+
+# Local/private custom configuration additions
+*.local.sh
+config.local
