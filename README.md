@@ -4,6 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Shell](https://img.shields.io/badge/shell-bash-blue?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
 [![Lint Setup Script](https://github.com/Harshidpatel12/ubuntu-dev-setup/actions/workflows/lint.yml/badge.svg)](https://github.com/Harshidpatel12/ubuntu-dev-setup/actions/workflows/lint.yml)
+[![Test Setup Script](https://github.com/Harshidpatel12/ubuntu-dev-setup/actions/workflows/test.yml/badge.svg)](https://github.com/Harshidpatel12/ubuntu-dev-setup/actions/workflows/test.yml)
 
 An automated, developer-focused bootstrap script to configure a fresh Ubuntu workstation into a high-productivity development environment in minutes.
 
@@ -27,22 +28,25 @@ Whether you are setting up a local machine, a fresh VM, or a remote server, **ub
 - 💻 **Productive Environment**: Registers pre-configured, helpful shell aliases (e.g., `gs`, `dco`, `dps`) and PATH settings to **both Bash and Zsh** (via `~/.bashrc` and `~/.zshrc`).
 - 🔑 **Interactive Identity Setup**: Guides you through configuring Git global settings and generates modern `Ed25519` SSH keys for GitHub/GitLab without overwriting existing keys.
 - 🐳 **Container & Host Aware**: Automatically detects if it is running inside a Docker container (where root is the default) or on a host machine, adapting permissions and execution styles accordingly.
+- 🔍 **Pre-flight Idempotency Check**: Scans and displays current versions of all known tools before doing anything, so you know exactly what will change.
+- 📋 **Post-install Summary Report**: Prints a clean formatted table at the end showing every tool's status (newly installed with version, already installed, or skipped).
+- 🧪 **`--dry-run` Mode**: Preview every action the script would take without touching your system — perfect for auditing on shared or company machines.
+- 🚄 **`--minimal` Mode**: Non-interactive core-only install (apt packages, Docker, `uv`). Great for fast CI server bootstraps.
+- 🤖 **`--full` Mode**: Fully automated unattended install of everything. Perfect for CI/CD pipelines, provisioning scripts, and Dockerfiles.
 
 ---
 
 ## 🚀 Quick Start
 
-You can run the bootstrap script directly from GitHub (once hosted) or by cloning the repository locally.
-
 ### Option 1: Direct Execution (Recommended for fresh machines)
 
-Run the script directly using process substitution (so interactive prompts work properly):
+Run using process substitution so interactive prompts work correctly:
 
 ```bash
 bash <(wget -qO- https://raw.githubusercontent.com/Harshidpatel12/ubuntu-dev-setup/main/setup.sh)
 ```
 
-If your machine is a minimal image and does not have `wget` installed, run this command to install `wget` and run the script:
+On a minimal image without `wget`:
 
 ```bash
 sudo apt-get update && sudo apt-get install -y wget && bash <(wget -qO- https://raw.githubusercontent.com/Harshidpatel12/ubuntu-dev-setup/main/setup.sh)
@@ -50,18 +54,50 @@ sudo apt-get update && sudo apt-get install -y wget && bash <(wget -qO- https://
 
 ### Option 2: Clone and Run
 
-If you want to review or customize the script before execution:
-
 ```bash
-# Clone the repository
 git clone https://github.com/Harshidpatel12/ubuntu-dev-setup.git
 cd ubuntu-dev-setup
-
-# Make the script executable
 chmod +x setup.sh
-
-# Run the setup
 ./setup.sh
+```
+
+---
+
+## 🎛️ CLI Flags & Modes
+
+The script supports several flags for different use cases:
+
+| Flag        | Description                                                |
+| ----------- | ---------------------------------------------------------- |
+| _(none)_    | Default interactive mode — prompts for each optional tool  |
+| `--dry-run` | Preview all actions without modifying the system           |
+| `--minimal` | Non-interactive: install core tools only (apt, Docker, uv) |
+| `--full`    | Non-interactive: install everything automatically          |
+| `--help`    | Show usage information and exit                            |
+
+Flags can be combined. For example:
+
+```bash
+# Preview a full install without touching anything (great for auditing)
+./setup.sh --dry-run --full
+
+# Fast CI server bootstrap — core tools only, no questions
+./setup.sh --minimal
+
+# Fully automated workstation setup — no prompts at all
+./setup.sh --full
+
+# Non-interactive setup via curl in CI/CD pipelines
+bash <(wget -qO- https://raw.githubusercontent.com/Harshidpatel12/ubuntu-dev-setup/main/setup.sh) --full
+```
+
+### Use in CI / Docker
+
+```dockerfile
+# Example Dockerfile snippet
+RUN apt-get update && apt-get install -y curl wget sudo && \
+    wget -qO setup.sh https://raw.githubusercontent.com/Harshidpatel12/ubuntu-dev-setup/main/setup.sh && \
+    chmod +x setup.sh && ./setup.sh --full
 ```
 
 ---

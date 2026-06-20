@@ -1,0 +1,49 @@
+name: Test Setup Script
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  dry-run-check:
+    name: Dry-Run Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Make script executable
+        run: chmod +x setup.sh
+
+      - name: Run in dry-run + full mode (no system changes)
+        run: ./setup.sh --dry-run --full
+
+  full-install-test:
+    name: Full Non-Interactive Install (Ubuntu 22.04 Container)
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:22.04
+      options: --privileged
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Install bootstrap dependencies
+        run: |
+          apt-get update -y
+          apt-get install -y sudo curl wget
+
+      - name: Make script executable
+        run: chmod +x setup.sh
+
+      - name: Run full non-interactive setup
+        run: ./setup.sh --full
+        env:
+          DEBIAN_FRONTEND: noninteractive
+          NEEDRESTART_MODE: l
