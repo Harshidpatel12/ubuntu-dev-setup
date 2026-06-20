@@ -111,6 +111,32 @@ For large codebases, IDEs can quickly hit the default Linux file-watcher limit. 
 
 ---
 
+## 📚 Tools & Official Documentation
+
+Below is a reference list of the tools managed by this script, complete with their official documentation links:
+
+| Tool | Category | Purpose | Documentation |
+| :--- | :--- | :--- | :--- |
+| **Git** | Core (Default) | Distributed version control system | [git-scm.com](https://git-scm.com/doc) |
+| **Docker / Compose** | Core (Default) | Containerization engine & multi-container manager | [docs.docker.com](https://docs.docker.com/) |
+| **Astral `uv`** | Core (Default) | Blazing fast Python package installer and resolver | [docs.astral.sh/uv](https://docs.astral.sh/uv/) |
+| **curl** | Core (Default) | Command-line tool for transferring data with URLs | [curl.se](https://curl.se/docs/) |
+| **jq** | Core (Default) | Command-line JSON parser and processor | [jqlang.github.io/jq](https://jqlang.github.io/jq/) |
+| **htop** | Core (Default) | Interactive process viewer and system monitor | [htop.dev](https://htop.dev/) |
+| **vim** | Core (Default) | Terminal-based text editor | [vim.org](https://www.vim.org/docs.php) |
+| **lsof** | Core (Default) | Utility to list open files and network ports | [man7.org/lsof](https://man7.org/linux/man-pages/man8/lsof.8.html) |
+| **build-essential** | Core (Default) | Compiler toolchains (gcc, g++, make, etc.) | [gcc.gnu.org](https://gcc.gnu.org/) |
+| **OpenSSH** | Core (Default) | Secure remote login protocol and agents | [openssh.com](https://www.openssh.com/) |
+| **tldr** | Core (Default) | Simplified, community-driven terminal man pages | [tldr.sh](https://tldr.sh/) |
+| **bash-completion** | Core (Default) | Tab-completion rules for command-line tools | [github.com/scop](https://github.com/scop/bash-completion) |
+| **FNM (Node Manager)** | Optional (Prompt) | Blazing-fast Node.js version manager in Rust | [fnm.vercel.app](https://fnm.vercel.app/) |
+| **Node.js (LTS)** | Optional (Prompt) | JavaScript runtime environment | [nodejs.org](https://nodejs.org/en/docs) |
+| **fzf** | Optional (Prompt) | Command-line fuzzy finder for files and history | [github.com/fzf](https://github.com/junegunn/fzf) |
+| **ripgrep (`rg`)** | Optional (Prompt) | Line-oriented search tool (modern grep replacement) | [github.com/ripgrep](https://github.com/BurntSushi/ripgrep) |
+| **bat** | Optional (Prompt) | Cat clone with syntax highlighting & Git diffs | [github.com/bat](https://github.com/sharkdp/bat) |
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! If you want to add support for more tools, shells (like Zsh/Oh My Zsh), or configurations:
