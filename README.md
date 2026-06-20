@@ -12,14 +12,14 @@ Whether you are setting up a local machine, a fresh VM, or a remote server, **ub
 
 ## ✨ Features
 
-- 📦 **Core Utilities & Toolchains**: Installs essential development packages (`git`, `curl`, `jq`, `htop`, `vim`, `lsof`, `build-essential`, `openssh`).
+- 📦 **Core Utilities & Toolchains**: Installs essential development packages (`git`, `gh`, `curl`, `jq`, `htop`, `vim`, `lsof`, `build-essential`, `openssh`).
 - 🐳 **Docker Ecosystem**: Installs Docker Engine & Docker Compose (v2) from official Docker repositories, configures non-root access, and configures Docker CLI shell auto-completions.
-- ⚡ **Lightning Fast Python**: Installs Astral's [`uv`](https://github.com/astral-sh/uv) (fast Python toolchain manager) and automatically configures shell autocompletions.
+- ⚡ **Lightning Fast Python**: Installs Astral's [`uv`](https://github.com/astral-sh/uv) (fast Python toolchain manager) and automatically configures shell autocompletions for Bash and Zsh.
 - 🟨 **Interactive Node.js Setup (Optional)**: Prompts to install Fast Node Manager (`fnm`) and Node.js LTS, keeping your JavaScript setup modern and switchable.
 - 🚀 **Modern CLI Power-ups (Optional)**: Prompts to install high-productivity command line utilities: `fzf` (fuzzy finder), `ripgrep` (search), and `bat` (enhanced cat with syntax highlighting).
 - 🖥️ **Desktop IDEs (Optional / GUI-only)**: Safely detects a graphical desktop environment and offers to install **VS Code** (native Microsoft APT package) and **PyCharm Community** (classic Snap package).
 - ⚙️ **Performance Tweaks**: Optimizes Linux file-watcher limits (`fs.inotify.max_user_watches`) to ensure smooth performance in heavy IDEs (like VS Code, IntelliJ, etc.).
-- 💻 **Productive Environment**: Registers pre-configured, helpful shell aliases (e.g., `gs`, `dco`, `dps`) and sets up auto-completions for a smooth workflow.
+- 💻 **Productive Environment**: Registers pre-configured, helpful shell aliases (e.g., `gs`, `dco`, `dps`) and PATH settings to **both Bash and Zsh** (via `~/.bashrc` and `~/.zshrc`).
 - 🔑 **Interactive Identity Setup**: Guides you through configuring Git global settings and generates modern `Ed25519` SSH keys for GitHub/GitLab without overwriting existing keys.
 - 🐳 **Container & Host Aware**: Automatically detects if it is running inside a Docker container (where root is the default) or on a host machine, adapting permissions and execution styles accordingly.
 
@@ -67,7 +67,7 @@ Here is exactly what gets installed and configured:
 
 ### 1. System Packages
 The script updates your local package lists and installs the following:
-* **Version Control**: `git`
+* **Version Control**: `git`, `gh` (official GitHub CLI)
 * **Network & Fetching**: `curl`, `openssh-server`, `openssh-client`
 * **Diagnostics & Monitoring**: `htop`, `lsof`, `jq`
 * **Compilers & Build Tools**: `build-essential` (gcc, g++, make)
@@ -124,6 +124,7 @@ Below is a reference list of the tools managed by this script, complete with the
 | Tool | Category | Purpose | Documentation |
 | :--- | :--- | :--- | :--- |
 | **Git** | Core (Default) | Distributed version control system | [git-scm.com](https://git-scm.com/doc) |
+| **gh (GitHub CLI)** | Core (Default) | Official command-line client for GitHub | [cli.github.com](https://cli.github.com/) |
 | **Docker / Compose** | Core (Default) | Containerization engine & multi-container manager | [docs.docker.com](https://docs.docker.com/) |
 | **Astral `uv`** | Core (Default) | Blazing fast Python package installer and resolver | [docs.astral.sh/uv](https://docs.astral.sh/uv/) |
 | **curl** | Core (Default) | Command-line tool for transferring data with URLs | [curl.se](https://curl.se/docs/) |

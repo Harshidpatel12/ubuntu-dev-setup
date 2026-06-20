@@ -20,14 +20,28 @@ else
     SUDO=""
 fi
 
-# Ensure ~/.bashrc exists before any writes to it
-touch ~/.bashrc
+# Ensure shell profiles exist and are identified
+PROFILES=("$HOME/.bashrc")
+if [ -f "$HOME/.zshrc" ] || command -v zsh &> /dev/null; then
+    touch "$HOME/.zshrc"
+    PROFILES+=("$HOME/.zshrc")
+fi
 
 # ----------------------------------------------------------
 # 0. System Package Index & Core Utilities
 # ----------------------------------------------------------
 echo "--> Updating system package index..."
 $SUDO apt-get update -y
+
+# Configure GitHub CLI repository if not present
+if ! command -v gh &> /dev/null; then
+    echo "--> Configuring GitHub CLI repository..."
+    $SUDO mkdir -p -m 755 /etc/apt/keyrings
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | $SUDO dd of=/etc/apt/keyrings/githubcli-archive-keyring.gpg 2>/dev/null
+    $SUDO chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | $SUDO tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+    $SUDO apt-get update -y
+fi
 
 echo "--> Installing core utilities & dev packages..."
 $SUDO apt-get install -y \
@@ -41,7 +55,8 @@ $SUDO apt-get install -y \
     openssh-server \
     openssh-client \
     tldr \
-    bash-completion
+    bash-completion \
+    gh
 
 # ----------------------------------------------------------
 # 1. System Tweak: Increase File Watcher Limit
@@ -96,33 +111,42 @@ fi
 # be updated yet in this session. The elif fallback handles that case.
 echo "--> Configuring 'uv' shell autocompletion..."
 UV_MARKER="# --- AUTOMATED UV COMPLETION ---"
-if ! grep -q "$UV_MARKER" ~/.bashrc; then
-    cat << 'EOF' >> ~/.bashrc
+for profile in "${PROFILES[@]}"; do
+    if ! grep -q "$UV_MARKER" "$profile"; then
+        if [[ "$profile" == *".zshrc" ]]; then
+            shell_type="zsh"
+        else
+            shell_type="bash"
+        fi
+        
+        cat << EOF >> "$profile"
 
 # --- AUTOMATED UV COMPLETION ---
 if command -v uv &> /dev/null; then
-    eval "$(uv generate-shell-completion bash)"
-elif [ -f "$HOME/.local/bin/uv" ]; then
-    eval "$("$HOME/.local/bin/uv" generate-shell-completion bash)"
+    eval "\$(uv generate-shell-completion ${shell_type})"
+elif [ -f "\$HOME/.local/bin/uv" ]; then
+    eval "\$(\"\$HOME/.local/bin/uv\" generate-shell-completion ${shell_type})"
 fi
 EOF
-fi
+    fi
+done
 
 # ----------------------------------------------------------
 # 4. Inject Dev Aliases (Safe / Idempotent)
 # ----------------------------------------------------------
-echo "--> Adding developer aliases to ~/.bashrc..."
+echo "--> Adding developer aliases to shell profiles..."
 ALIAS_MARKER="# --- AUTOMATED DEV ALIASES ---"
-
-if ! grep -q "$ALIAS_MARKER" ~/.bashrc; then
-    cat << 'EOF' >> ~/.bashrc
+for profile in "${PROFILES[@]}"; do
+    if ! grep -q "$ALIAS_MARKER" "$profile"; then
+        cat << 'EOF' >> "$profile"
 
 # --- AUTOMATED DEV ALIASES ---
 alias gs="git status"
 alias dco="docker compose"
 alias dps="docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
 EOF
-fi
+    fi
+done
 
 # ----------------------------------------------------------
 # 5. Housekeeping & Cache Cleanup
@@ -220,17 +244,19 @@ if [ -t 0 ]; then
             echo "--> Created symlink: bat -> /usr/bin/batcat"
         fi
 
-        # Ensure ~/.local/bin is on PATH (idempotent)
+        # Ensure ~/.local/bin is on PATH in profiles (idempotent)
         PATH_MARKER="# --- AUTOMATED LOCAL BIN PATH ---"
-        if ! grep -q "$PATH_MARKER" ~/.bashrc; then
-            cat << 'EOF' >> ~/.bashrc
+        for profile in "${PROFILES[@]}"; do
+            if ! grep -q "$PATH_MARKER" "$profile"; then
+                cat << 'EOF' >> "$profile"
 
 # --- AUTOMATED LOCAL BIN PATH ---
 if [ -d "$HOME/.local/bin" ]; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 EOF
-        fi
+            fi
+        done
 
         echo "--> fzf, ripgrep, and bat are ready to use."
     else
