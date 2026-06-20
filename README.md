@@ -12,9 +12,11 @@ Whether you are setting up a local machine, a fresh VM, or a remote server, **ub
 
 ## ✨ Features
 
-- 📦 **Core Utilities & Toolchains**: Installs essential development packages (`git`, `curl`, `wget`, `jq`, `htop`, `vim`, `lsof`, `build-essential`, `openssh`).
+- 📦 **Core Utilities & Toolchains**: Installs essential development packages (`git`, `curl`, `jq`, `htop`, `vim`, `lsof`, `build-essential`, `openssh`).
 - 🐳 **Docker Ecosystem**: Installs Docker Engine & Docker Compose (v2) from official Docker repositories, configures non-root access, and configures Docker CLI shell auto-completions.
-- ⚡ **Lightning Fast Python**: Installs Astral's [`uv`](https://github.com/astral-sh/uv) — the blazing fast Python package manager and resolver.
+- ⚡ **Lightning Fast Python**: Installs Astral's [`uv`](https://github.com/astral-sh/uv) (fast Python toolchain manager) and automatically configures shell autocompletions.
+- 🟨 **Interactive Node.js Setup (Optional)**: Prompts to install Fast Node Manager (`fnm`) and Node.js LTS, keeping your JavaScript setup modern and switchable.
+- 🚀 **Modern CLI Power-ups (Optional)**: Prompts to install high-productivity command line utilities: `fzf` (fuzzy finder), `ripgrep` (search), and `bat` (enhanced cat with syntax highlighting).
 - ⚙️ **Performance Tweaks**: Optimizes Linux file-watcher limits (`fs.inotify.max_user_watches`) to ensure smooth performance in heavy IDEs (like VS Code, IntelliJ, etc.).
 - 💻 **Productive Environment**: Registers pre-configured, helpful shell aliases (e.g., `gs`, `dco`, `dps`) and sets up auto-completions for a smooth workflow.
 - 🔑 **Interactive Identity Setup**: Guides you through configuring Git global settings and generates modern `Ed25519` SSH keys for GitHub/GitLab without overwriting existing keys.
@@ -79,6 +81,7 @@ The script updates your local package lists and installs the following:
 ### 3. Astral `uv` (Python)
 * Installs `uv`, a drop-in replacement for `pip`, `pip-tools`, and `virtualenv` written in Rust.
 * Speeds up Python package installations by 10-100x.
+* Registers `uv` shell autocompletion in your `~/.bashrc`.
 
 ### 4. Custom Shell Aliases
 Appends a dedicated block of developer aliases to your `~/.bashrc` (safely and idempotently):
@@ -88,6 +91,15 @@ Appends a dedicated block of developer aliases to your `~/.bashrc` (safely and i
 
 ### 5. System Optimizations
 For large codebases, IDEs can quickly hit the default Linux file-watcher limit. The script increases `fs.inotify.max_user_watches` to `524288` inside `/etc/sysctl.d/99-dev-tweaks.conf`.
+
+### 6. Node.js & FNM (Optional)
+* Installs Fast Node Manager (`fnm`), an ultra-fast Node.js version manager written in Rust.
+* Automatically downloads and configures the latest Node.js LTS version.
+
+### 7. Modern CLI Utilities (Optional)
+* Installs `fzf` (fuzzy finder) for interactive command-line searches.
+* Installs `ripgrep` (`rg`) for rapid recursive file searching.
+* Installs `bat` (a `cat` clone with syntax highlighting) and configures a `bat` command redirect so it launches natively on Ubuntu.
 
 ---
 

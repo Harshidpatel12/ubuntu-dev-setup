@@ -1,21 +1,34 @@
 #!/usr/bin/env bash
 set -e
 
-echo "=================================================="
-echo "🚀 Bootstrapping Ultimate Linux Dev Workstation..."
-echo "=================================================="
+# ==========================================================
+# Ubuntu Dev Setup - Bootstrap Script
+# https://github.com/Harshidpatel12/ubuntu-dev-setup
+# ==========================================================
 
-# Detect if we are running as root (Docker) or normal user (Host PC)
+echo "=================================================="
+echo "🚀 Bootstrapping Ubuntu Dev Workstation..."
+echo "=================================================="
+echo ""
+
+# ----------------------------------------------------------
+# Detect if running as root (Docker) or normal user (Host)
+# ----------------------------------------------------------
 if [ "$(id -u)" -ne 0 ]; then
     SUDO="sudo"
 else
     SUDO=""
 fi
 
+# Ensure ~/.bashrc exists before any writes to it
+touch ~/.bashrc
+
+# ----------------------------------------------------------
+# 0. System Package Index & Core Utilities
+# ----------------------------------------------------------
 echo "--> Updating system package index..."
 $SUDO apt-get update -y
 
-# Added 'lsof' to the payload
 echo "--> Installing core utilities & dev packages..."
 $SUDO apt-get install -y \
     git \
@@ -30,18 +43,18 @@ $SUDO apt-get install -y \
     tldr \
     bash-completion
 
-# ---------------------------------------------------------
+# ----------------------------------------------------------
 # 1. System Tweak: Increase File Watcher Limit
-# ---------------------------------------------------------
+# ----------------------------------------------------------
 if [ -n "$SUDO" ] && [ -d "/etc/sysctl.d" ]; then
     echo "--> Optimizing Linux file-watcher limits for heavy projects..."
     echo "fs.inotify.max_user_watches=524288" | $SUDO tee /etc/sysctl.d/99-dev-tweaks.conf > /dev/null
     $SUDO sysctl --system > /dev/null || true
 fi
 
-# ---------------------------------------------------------
+# ----------------------------------------------------------
 # 2. Docker & Docker Compose (v2)
-# ---------------------------------------------------------
+# ----------------------------------------------------------
 if ! command -v docker &> /dev/null; then
     echo "--> Installing Docker Engine..."
     curl -fsSL https://get.docker.com -o get-docker.sh
@@ -55,20 +68,22 @@ if ! command -v docker &> /dev/null; then
 
     if [ -n "$SUDO" ]; then
         $SUDO usermod -aG docker "$USER"
-        echo "Granted '$USER' permission to run Docker without sudo."
+        echo "--> Granted '$USER' permission to run Docker without sudo."
     fi
+
+    # Apply Docker CLI tab-completion only on fresh install
+    echo "--> Applying Docker CLI tab-completion rules..."
+    $SUDO mkdir -p /etc/bash_completion.d
+    $SUDO curl -sSL \
+        https://raw.githubusercontent.com/docker/cli/master/contrib/completion/bash/docker \
+        -o /etc/bash_completion.d/docker
 else
     echo "--> Docker is already installed. Skipping."
 fi
 
-# Apply Docker CLI tab-completion
-echo "--> Applying Docker CLI tab-completion rules..."
-$SUDO mkdir -p /etc/bash_completion.d
-$SUDO curl -sSL https://raw.githubusercontent.com/docker/cli/master/contrib/completion/bash/docker -o /etc/bash_completion.d/docker
-
-# ---------------------------------------------------------
+# ----------------------------------------------------------
 # 3. Python Environment (Astral 'uv')
-# ---------------------------------------------------------
+# ----------------------------------------------------------
 if ! command -v uv &> /dev/null; then
     echo "--> Installing 'uv' Python package manager..."
     curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -76,11 +91,27 @@ else
     echo "--> 'uv' is already installed. Skipping."
 fi
 
-# ---------------------------------------------------------
+# Configure uv shell autocompletion (safe / idempotent)
+# NOTE: uv installs to ~/.local/bin/uv on first run, so PATH may not
+# be updated yet in this session. The elif fallback handles that case.
+echo "--> Configuring 'uv' shell autocompletion..."
+UV_MARKER="# --- AUTOMATED UV COMPLETION ---"
+if ! grep -q "$UV_MARKER" ~/.bashrc; then
+    cat << 'EOF' >> ~/.bashrc
+
+# --- AUTOMATED UV COMPLETION ---
+if command -v uv &> /dev/null; then
+    eval "$(uv generate-shell-completion bash)"
+elif [ -f "$HOME/.local/bin/uv" ]; then
+    eval "$("$HOME/.local/bin/uv" generate-shell-completion bash)"
+fi
+EOF
+fi
+
+# ----------------------------------------------------------
 # 4. Inject Dev Aliases (Safe / Idempotent)
-# ---------------------------------------------------------
+# ----------------------------------------------------------
 echo "--> Adding developer aliases to ~/.bashrc..."
-touch ~/.bashrc
 ALIAS_MARKER="# --- AUTOMATED DEV ALIASES ---"
 
 if ! grep -q "$ALIAS_MARKER" ~/.bashrc; then
@@ -93,19 +124,19 @@ alias dps="docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
 EOF
 fi
 
-# ---------------------------------------------------------
-# 5. Housekeeping & Cache Cleans
-# ---------------------------------------------------------
+# ----------------------------------------------------------
+# 5. Housekeeping & Cache Cleanup
+# ----------------------------------------------------------
 echo "--> Updating tldr offline database..."
 tldr --update || true
 
-echo "--> Taking out the apt trash..."
+echo "--> Cleaning up apt cache..."
 $SUDO apt-get autoremove -y > /dev/null
 $SUDO apt-get clean
 
-# ---------------------------------------------------------
-# 6. Interactive Finale: Git & SSH
-# ---------------------------------------------------------
+# ----------------------------------------------------------
+# 6. Interactive Configuration (Git, Node.js, CLI tools)
+# ----------------------------------------------------------
 echo ""
 echo "=================================================="
 echo "📦 ALL PACKAGES INSTALLED SUCCESSFULLY!"
@@ -113,23 +144,24 @@ echo "=================================================="
 echo ""
 
 if [ -t 0 ]; then
+
+    # --- Git & SSH Setup ---
     read -p "🔑 Configure Git and generate a GitHub/GitLab SSH key right now? [y/N]: " setup_git
 
     if [[ "$setup_git" =~ ^[Yy]$ ]]; then
         read -p "Enter your full name for Git commits (e.g. Jane Doe): " git_name
         read -p "Enter your Git email address: " git_email
-        
-        # Set Git defaults
+
         git config --global user.name "$git_name"
         git config --global user.email "$git_email"
         git config --global init.defaultBranch main
 
-        # Generate key instantly if one doesn't already sit there
+        # Generate key only if one doesn't already exist
         if [ ! -f ~/.ssh/id_ed25519 ]; then
             mkdir -p ~/.ssh
             chmod 700 ~/.ssh
             ssh-keygen -t ed25519 -C "$git_email" -f ~/.ssh/id_ed25519 -N ""
-            
+
             echo ""
             echo "------------------------------------------------------------------"
             echo "✨ NEW SSH PUBLIC KEY GENERATED:"
@@ -137,14 +169,78 @@ if [ -t 0 ]; then
             echo "------------------------------------------------------------------"
             echo "Copy the line above and paste it into GitHub -> Settings -> SSH Keys"
         else
-            echo "⚠️ An Ed25519 key already exists in ~/.ssh/. Skipping generation to keep it safe."
+            echo "⚠️  An Ed25519 key already exists at ~/.ssh/id_ed25519. Skipping to keep it safe."
         fi
     else
         echo "--> Skipping Git & SSH configuration."
     fi
+
+    # --- Node.js Setup (via fnm) ---
+    echo ""
+    read -p "🟨 Do you want to install Node.js (via FNM - Fast Node Manager)? [y/N]: " setup_node
+
+    if [[ "$setup_node" =~ ^[Yy]$ ]]; then
+        if ! command -v fnm &> /dev/null; then
+            echo "--> Installing fnm (Fast Node Manager)..."
+            curl -fsSL https://fnm.vercel.app/install | bash
+
+            # Source fnm into the current session so we can use it immediately
+            export PATH="$HOME/.local/share/fnm:$PATH"
+            eval "$(fnm env --use-on-cd)"
+        else
+            echo "--> 'fnm' is already installed."
+        fi
+
+        # Install Node.js LTS if node is not yet available
+        if ! command -v node &> /dev/null; then
+            echo "--> Installing Node.js LTS..."
+            fnm install --lts
+            # Use the version just installed as the default
+            fnm default "$(fnm current)"
+        else
+            echo "--> Node.js is already installed: $(node -v)"
+        fi
+    else
+        echo "--> Skipping Node.js installation."
+    fi
+
+    # --- Modern CLI Utilities (fzf, ripgrep, bat) ---
+    echo ""
+    read -p "🚀 Do you want to install modern CLI utilities (fzf, ripgrep, bat)? [y/N]: " setup_cli_utils
+
+    if [[ "$setup_cli_utils" =~ ^[Yy]$ ]]; then
+        echo "--> Installing fzf, ripgrep, batcat..."
+        # NOTE: On Ubuntu, 'bat' is packaged as 'batcat' to avoid a naming conflict
+        $SUDO apt-get install -y fzf ripgrep batcat
+
+        # Create a 'bat' symlink so it can be called as 'bat' instead of 'batcat'
+        mkdir -p "$HOME/.local/bin"
+        if [ -f /usr/bin/batcat ]; then
+            ln -sf /usr/bin/batcat "$HOME/.local/bin/bat"
+            echo "--> Created symlink: bat -> /usr/bin/batcat"
+        fi
+
+        # Ensure ~/.local/bin is on PATH (idempotent)
+        PATH_MARKER="# --- AUTOMATED LOCAL BIN PATH ---"
+        if ! grep -q "$PATH_MARKER" ~/.bashrc; then
+            cat << 'EOF' >> ~/.bashrc
+
+# --- AUTOMATED LOCAL BIN PATH ---
+if [ -d "$HOME/.local/bin" ]; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+EOF
+        fi
+
+        echo "--> fzf, ripgrep, and bat are ready to use."
+    else
+        echo "--> Skipping modern CLI utilities."
+    fi
+
 else
-    echo "--> Non-interactive shell detected. Skipping interactive Git & SSH configuration."
+    echo "--> Non-interactive shell detected. Skipping interactive configuration."
 fi
 
 echo ""
-echo "🎉 SETUP COMPLETE! Please restart your terminal."
+echo "🎉 SETUP COMPLETE! Please restart your terminal (or run: source ~/.bashrc)"
+echo ""
