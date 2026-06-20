@@ -31,16 +31,16 @@ You can run the bootstrap script directly from GitHub (once hosted) or by clonin
 
 ### Option 1: Direct Execution (Recommended for fresh machines)
 
-Run the script directly using `wget` (which is typically pre-installed on Ubuntu):
+Run the script directly using process substitution (so interactive prompts work properly):
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/Harshidpatel12/ubuntu-dev-setup/main/setup.sh | bash
+bash <(wget -qO- https://raw.githubusercontent.com/Harshidpatel12/ubuntu-dev-setup/main/setup.sh)
 ```
 
-If your machine is a minimal image and does not have `wget` installed, run this single command to install `wget` and execute the script:
+If your machine is a minimal image and does not have `wget` installed, run this command to install `wget` and run the script:
 
 ```bash
-sudo apt-get update && sudo apt-get install -y wget && wget -qO- https://raw.githubusercontent.com/Harshidpatel12/ubuntu-dev-setup/main/setup.sh | bash
+sudo apt-get update && sudo apt-get install -y wget && bash <(wget -qO- https://raw.githubusercontent.com/Harshidpatel12/ubuntu-dev-setup/main/setup.sh)
 ```
 
 ### Option 2: Clone and Run

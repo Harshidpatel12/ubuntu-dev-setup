@@ -303,6 +303,9 @@ EOF
 
 else
     echo "--> Non-interactive shell detected. Skipping interactive configuration."
+    echo "💡 Note: To run the interactive setup (Git, Node, CLI tools, IDEs) directly,"
+    echo "   execute the script using process substitution instead of piping:"
+    echo "   bash <(wget -qO- https://raw.githubusercontent.com/Harshidpatel12/ubuntu-dev-setup/main/setup.sh)"
 fi
 
 echo ""
