@@ -6,6 +6,10 @@ set -e
 # https://github.com/Harshidpatel12/ubuntu-dev-setup
 # ==========================================================
 
+# Prevent interactive prompts (like service restart dialogs) during package installs
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_MODE=l
+
 echo "=================================================="
 echo "🚀 Bootstrapping Ubuntu Dev Workstation..."
 echo "=================================================="
@@ -44,7 +48,7 @@ if ! command -v gh &> /dev/null; then
 fi
 
 echo "--> Installing core utilities & dev packages..."
-$SUDO apt-get install -y \
+$SUDO apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
     git \
     curl \
     jq \
@@ -235,7 +239,7 @@ if [ -t 0 ]; then
     if [[ "$setup_cli_utils" =~ ^[Yy]$ ]]; then
         echo "--> Installing fzf, ripgrep, batcat..."
         # NOTE: On Ubuntu, 'bat' is packaged as 'batcat' to avoid a naming conflict
-        $SUDO apt-get install -y fzf ripgrep batcat
+        $SUDO apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" fzf ripgrep batcat
 
         # Create a 'bat' symlink so it can be called as 'bat' instead of 'batcat'
         mkdir -p "$HOME/.local/bin"
@@ -275,7 +279,7 @@ EOF
                 # Add Microsoft VS Code repository
                 echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | $SUDO tee /etc/apt/sources.list.d/vscode.list > /dev/null
                 $SUDO apt-get update -y
-                $SUDO apt-get install -y code
+                $SUDO apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" code
             else
                 echo "--> VS Code is already installed."
             fi
